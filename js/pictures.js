@@ -1,4 +1,9 @@
-import { getRandomPositiveInteger, getRandomArrayElement, } from './util.js';
+import { getRandomPositiveInteger, getRandomArrayElement, createRandomId } from './util.js';
+
+const PHOTO_DESCRIPTION_COUNTER = 25;
+const COMMENT_PER_PHOTO_MAX = 6;
+const COMMENT_PER_PHOTO_MIN = 2;
+const COMMENT_PHOTO_MAX = PHOTO_DESCRIPTION_COUNTER * COMMENT_PER_PHOTO_MAX;
 
 const NAME = [
   'Лёха',
@@ -66,7 +71,13 @@ const MESSAGE = [
   'Мне очень понравилось'
 ];
 
-const PHOTO_DESCRIPTION_COUNTER = 25;
+const generateId = createRandomId(1, COMMENT_PHOTO_MAX);
+const getComment = () => ({
+  id: generateId(),
+  avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
+  message: getRandomArrayElement(MESSAGE),
+  name: getRandomArrayElement(NAME)
+});
 
 const createDescriptionOfThePhoto = (index) => {
   const descriptionOfThePhoto = {
@@ -74,20 +85,18 @@ const createDescriptionOfThePhoto = (index) => {
     url: `photos/${index}.jpg`,
     description: getRandomArrayElement(DESCRIPTION),
     likes: getRandomPositiveInteger(15, 200),
-    comments: {
-      id: `${index}`,
-      avatar: `img/avatar-${getRandomPositiveInteger(1, 6)}.svg`,
-      message: getRandomArrayElement(MESSAGE),
-      name: getRandomArrayElement(NAME)
-    }
+    comments: Array.from({
+      length:
+        getRandomPositiveInteger(COMMENT_PER_PHOTO_MIN, COMMENT_PER_PHOTO_MAX)
+    }, getComment)
   };
   return descriptionOfThePhoto;
 };
 
-const createPhotos = () => {
+const createPictures = () => {
   const similarPhotos = Array.from({ length: PHOTO_DESCRIPTION_COUNTER },
     (_, index) => createDescriptionOfThePhoto(index + 1));
   return similarPhotos;
 };
 
-export { createPhotos, PHOTO_DESCRIPTION_COUNTER };
+export { createPictures };
